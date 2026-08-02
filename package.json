@@ -1,7 +1,7 @@
 {
   "name": "@flowscripter/pluggable-io-framework-api",
   "version": "0.1.0",
-  "description": "API contracts for pluggable-io-framework source/sink provider plugins",
+  "description": "API for the https://github.com/flowscripter/pluggable-io-framework",
   "keywords": [
     "api",
     "bun",
