@@ -1,15 +1,13 @@
-import type { ChunkRef } from "./ChunkRef.ts";
+import type { ChunkKind, ChunkOfKind } from "./ChunkRef.ts";
 
 /**
- * A handle to a readable or writable stream of {@link ChunkRef}s, plus
- * optional capability methods for providers/decorators that support
- * random-access beyond plain sequential read (e.g. `seekable`).
- *
- * Capability methods are present only when supported - consumers
- * feature-detect via `typeof handle.seek === "function"` etc.
+ * A handle to a readable or writable stream of a single, declared
+ * {@link ChunkKind} - homogeneous, so consumers never need to test each
+ * chunk's kind. Plus optional capability methods for providers/decorators
+ * that support random-access beyond plain sequential read (e.g. `seekable`)
+ * - see {@link Seekable}/{@link isSeekable} in `StreamDecorator.ts`.
  */
-export interface StreamHandle {
-  readonly stream: ReadableStream<ChunkRef> | WritableStream<ChunkRef>;
-  seek?(offset: number): Promise<void>;
-  readRange?(start: number, end: number): Promise<ReadableStream<ChunkRef>>;
+export interface StreamHandle<K extends ChunkKind = ChunkKind> {
+  readonly kind: K;
+  readonly stream: ReadableStream<ChunkOfKind<K>> | WritableStream<ChunkOfKind<K>>;
 }

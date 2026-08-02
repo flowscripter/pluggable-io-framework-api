@@ -1,4 +1,5 @@
 import type { ZodType } from "zod";
+import type { ChunkKind } from "./ChunkRef.ts";
 import type { IOProvider } from "./IOProvider.ts";
 
 /**
@@ -13,13 +14,9 @@ export const PLUGGABLE_IO_FRAMEWORK_PROVIDER_FACTORY_EXTENSION_POINT =
  * Returned (as `unknown`, cast at the extension point boundary) from
  * `ExtensionFactory.create()` in a `dynamic-plugin-framework`
  * `ExtensionDescriptor`.
- *
- * Config/property schema: Zod is the source of truth; JSON Schema can be
- * derived via `zod-to-json-schema` for portability (hand-edited config
- * files, non-TS validation).
  */
-export interface IOProviderFactory<TConfig = unknown> {
+export interface IOProviderFactory<TConfig = unknown, K extends ChunkKind = ChunkKind> {
   readonly configSchema: ZodType<TConfig>;
   readonly propertySchema: ZodType<Record<string, unknown>>;
-  createProvider(config: TConfig): Promise<IOProvider>;
+  createProvider(config: TConfig): Promise<IOProvider<K>>;
 }

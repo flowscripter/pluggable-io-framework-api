@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
 import { z } from "zod";
 import {
-  type ChunkRef,
   type IOProvider,
   type IOProviderFactory,
+  type JsChunk,
   PLUGGABLE_IO_FRAMEWORK_PROVIDER_FACTORY_EXTENSION_POINT,
   fromWebReadableStream,
   toWebReadableStream,
@@ -12,10 +12,11 @@ import {
 const exampleConfigSchema = z.object({ rootPath: z.string() });
 const examplePropertySchema = z.object({ etag: z.string().optional() });
 
-function createExampleProvider(_config: z.infer<typeof exampleConfigSchema>): IOProvider {
+function createExampleProvider(_config: z.infer<typeof exampleConfigSchema>): IOProvider<"js"> {
   const store = new Map<string, Uint8Array>();
   return {
-    async dispose() {},
+    kind: "js" as const,
+    async [Symbol.asyncDispose]() {},
     async *list() {
       for (const path of store.keys()) {
         yield {
@@ -40,7 +41,8 @@ function createExampleProvider(_config: z.infer<typeof exampleConfigSchema>): IO
     async getReadableStream(path: string) {
       const data = store.get(path) ?? new Uint8Array();
       return {
-        stream: new ReadableStream<ChunkRef>({
+        kind: "js" as const,
+        stream: new ReadableStream<JsChunk>({
           start(controller) {
             controller.enqueue({ kind: "js", data });
             controller.close();
@@ -51,9 +53,10 @@ function createExampleProvider(_config: z.infer<typeof exampleConfigSchema>): IO
     async getWritableStream(path: string) {
       const chunks: Uint8Array[] = [];
       return {
-        stream: new WritableStream<ChunkRef>({
+        kind: "js" as const,
+        stream: new WritableStream<JsChunk>({
           write(chunk) {
-            if (chunk.kind === "js") chunks.push(chunk.data);
+            chunks.push(chunk.data);
           },
           close() {
             store.set(path, Buffer.concat(chunks));
@@ -68,7 +71,7 @@ function createExampleProvider(_config: z.infer<typeof exampleConfigSchema>): IO
   };
 }
 
-const exampleFactory: IOProviderFactory<z.infer<typeof exampleConfigSchema>> = {
+const exampleFactory: IOProviderFactory<z.infer<typeof exampleConfigSchema>, "js"> = {
   configSchema: exampleConfigSchema,
   propertySchema: examplePropertySchema,
   async createProvider(config) {
@@ -86,19 +89,17 @@ describe("IOProviderFactory contract", () => {
   test("example factory validates config and round-trips a write/read", async () => {
     const provider = await exampleFactory.createProvider({ rootPath: "/tmp" });
     const writable = await provider.getWritableStream("hello.txt");
-    const writer = (writable.stream as WritableStream<ChunkRef>).getWriter();
+    const writer = (writable.stream as WritableStream<JsChunk>).getWriter();
     await writer.write({ kind: "js", data: new TextEncoder().encode("hello") });
     await writer.close();
 
     const readable = await provider.getReadableStream("hello.txt");
-    const reader = (readable.stream as ReadableStream<ChunkRef>).getReader();
+    const reader = (readable.stream as ReadableStream<JsChunk>).getReader();
     const { value } = await reader.read();
     expect(value?.kind).toBe("js");
-    expect(new TextDecoder().decode((value as { kind: "js"; data: Uint8Array }).data)).toBe(
-      "hello",
-    );
+    expect(new TextDecoder().decode(value?.data)).toBe("hello");
 
-    await provider.dispose();
+    await provider[Symbol.asyncDispose]();
   });
 
   test("createProvider rejects invalid config", async () => {

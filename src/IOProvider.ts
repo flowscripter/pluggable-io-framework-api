@@ -1,17 +1,24 @@
+import type { ChunkKind } from "./ChunkRef.ts";
 import type { ItemProperties } from "./ItemProperties.ts";
 import type { Part } from "./Part.ts";
 import type { StreamHandle } from "./StreamHandle.ts";
 
 /**
  * A configured source/sink instance, as returned by
- * {@link IOProviderFactory.createProvider}.
+ * {@link IOProviderFactory.createProvider}. `K` is the single
+ * {@link ChunkKind} this provider natively produces/consumes - e.g. a
+ * pure-TS filesystem plugin is `IOProvider<"js">`, a Rust-FFI-backed plugin
+ * is `IOProvider<"native">`.
  *
- * Disposal is the explicit {@link IOProvider.dispose} method - not a reliance
- * on `Symbol.asyncDispose` - so plugins have an unambiguous, discoverable
- * contract for releasing connections/handles.
+ * Disposal is `Symbol.asyncDispose` (TC39 explicit resource management) -
+ * host code disposes deterministically via `await using provider = ...`,
+ * including on thrown errors, without needing a bespoke method name.
  */
-export interface IOProvider {
-  dispose(): Promise<void>;
+export interface IOProvider<K extends ChunkKind = ChunkKind> {
+  /** The single chunk kind this provider natively produces/consumes. */
+  readonly kind: K;
+
+  [Symbol.asyncDispose](): Promise<void>;
 
   list(
     path: string,
@@ -21,10 +28,10 @@ export interface IOProvider {
   setProperties(path: string, properties: Partial<Record<string, unknown>>): Promise<void>;
   delete(path: string): Promise<void>;
 
-  getReadableStream(path: string): Promise<StreamHandle>;
-  getWritableStream(path: string): Promise<StreamHandle>;
-  getMultipartReader(path: string): AsyncIterable<Part>;
-  getMultipartWriter(path: string): { write(parts: AsyncIterable<Part>): Promise<void> };
+  getReadableStream(path: string): Promise<StreamHandle<K>>;
+  getWritableStream(path: string): Promise<StreamHandle<K>>;
+  getMultipartReader(path: string): AsyncIterable<Part<K>>;
+  getMultipartWriter(path: string): { write(parts: AsyncIterable<Part<K>>): Promise<void> };
 
   /**
    * Self-reported direct-transfer eligibility - the provider owns what
