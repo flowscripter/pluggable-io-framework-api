@@ -1,0 +1,60 @@
+{
+  "name": "@flowscripter/pluggable-io-framework-api",
+  "version": "0.1.0",
+  "description": "API contracts for pluggable-io-framework source/sink provider plugins",
+  "keywords": [
+    "api",
+    "bun",
+    "io",
+    "plugin"
+  ],
+  "homepage": "https://github.com/flowscripter/pluggable-io-framework-api#readme",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flowscripter/pluggable-io-framework-api.git"
+  },
+  "files": [
+    "dist",
+    "src",
+    "index.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "bun": "./index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "zod": "^3.24.0",
+    "zod-to-json-schema": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.14",
+    "oxfmt": "0.57.0",
+    "oxlint": "1.72.0"
+  },
+  "peerDependencies": {
+    "typescript": "^6.0.3"
+  },
+  "typedocOptions": {
+    "readme": "none",
+    "exclude": [
+      "tests/**"
+    ]
+  }
+}
