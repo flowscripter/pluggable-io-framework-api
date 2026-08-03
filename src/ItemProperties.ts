@@ -1,8 +1,7 @@
 /**
  * Properties of a file/folder item. `size`, `lastModified`, `isFolder` and
  * `contentType` are well-known, framework-guaranteed fields every provider
- * must populate so generic consumers (CLI, copy/move orchestration) can rely
- * on them without knowing the provider. Anything provider-specific (etag,
+ * must populate. Anything provider-specific (etag,
  * storage class, custom tags) goes in `properties`, validated against that
  * provider's `propertySchema`.
  */
