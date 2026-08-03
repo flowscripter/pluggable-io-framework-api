@@ -85,19 +85,6 @@ export function adaptReadableStream<From extends ChunkKind, To extends ChunkKind
 }
 
 /**
- * Copy a JsChunk's bytes into a plain Uint8Array. Throws for NativeChunk -
- * use a runtime-specific {@link ChunkConverter} to copy native memory out.
- */
-export function toUint8Array(chunk: ChunkRef): Uint8Array {
-  if (chunk.kind === ChunkKind.Js) {
-    return chunk.data;
-  }
-  throw new Error(
-    "Copying a native ChunkRef to Uint8Array requires an FFI-capable runtime helper - not implemented in pluggable-io-framework-api",
-  );
-}
-
-/**
  * Adapter to the standard Web Streams interop surface (fetch, pipeTo
  * external consumers). This is the one clearly-marked copy boundary -
  * internal source/sink/decorator code speaks {@link ChunkRef} directly.

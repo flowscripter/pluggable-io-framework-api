@@ -25,7 +25,7 @@
   for interop (`fetch`, `pipeTo`, etc.).
 - Capabilities beyond plain streaming (e.g. `seekable`) are modeled as
   small interfaces (`Seekable`, `RangeReadable`) with co-located type guards
-  (`isSeekable`, `isRangeReadable`) rather than ad hoc `typeof` checks.
+  (`isSeekable`, `isRangeReadable`).
 - Well-known item properties (`size`, `lastModified`, `isFolder`,
   `contentType`) are default for every provider.
 - A provider-specific
