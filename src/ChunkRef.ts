@@ -1,10 +1,5 @@
 /**
- * The two possible chunk memory origins. A TS `enum` rather than a
- * string-literal union - plugin authors already import from this package
- * for every other type (`IOProvider`, `IOProviderFactory`, etc.), so
- * requiring `ChunkKind.Js`/`ChunkKind.Native` here adds no new import
- * burden, and the enum gives a single named, documented, autocompletable
- * surface for the two values.
+ * The two possible chunk memory origins.
  */
 export enum ChunkKind {
   Js = "js",
@@ -34,10 +29,6 @@ export interface NativeChunk {
 
 /**
  * A chunk of stream payload, tagged with its memory origin/ownership.
- *
- * Deliberately shaped close to the future Flowscripter runtime's Item
- * (attributes + payload) so it is a natural fit if/when an `adapt` operator
- * wraps these streams later. `attributes` is unused today.
  */
 export type ChunkRef = JsChunk | NativeChunk;
 
@@ -120,7 +111,8 @@ export function toWebReadableStream(source: ReadableStream<JsChunk>): ReadableSt
         controller.close();
         return;
       }
-      controller.enqueue(toUint8Array(value));
+      // value is statically a JsChunk here - no per-chunk kind check needed.
+      controller.enqueue(value.data);
     },
     cancel(reason) {
       return reader.cancel(reason);
