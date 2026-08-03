@@ -43,7 +43,7 @@
 - See
   [pluggable-io-framework](https://github.com/flowscripter/pluggable-io-framework)
   for orchestration and
-  [pluggable-io-framework-plugin-filesystem](https://github.com/flowscripter/pluggable-io-framework-plugin-filesystem)
+  [io-plugin-filesystem](https://github.com/flowscripter/io-plugin-filesystem)
   for a reference implementation.
 
 ## Development
