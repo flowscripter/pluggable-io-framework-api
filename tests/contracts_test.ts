@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { z } from "zod";
 import {
+  ChunkKind,
   type IOProvider,
   type IOProviderFactory,
   type JsChunk,
@@ -12,10 +13,12 @@ import {
 const exampleConfigSchema = z.object({ rootPath: z.string() });
 const examplePropertySchema = z.object({ etag: z.string().optional() });
 
-function createExampleProvider(_config: z.infer<typeof exampleConfigSchema>): IOProvider<"js"> {
+function createExampleProvider(
+  _config: z.infer<typeof exampleConfigSchema>,
+): IOProvider<ChunkKind.Js> {
   const store = new Map<string, Uint8Array>();
   return {
-    kind: "js" as const,
+    kind: ChunkKind.Js,
     async [Symbol.asyncDispose]() {},
     async *list() {
       for (const path of store.keys()) {
@@ -41,10 +44,10 @@ function createExampleProvider(_config: z.infer<typeof exampleConfigSchema>): IO
     async getReadableStream(path: string) {
       const data = store.get(path) ?? new Uint8Array();
       return {
-        kind: "js" as const,
+        kind: ChunkKind.Js,
         stream: new ReadableStream<JsChunk>({
           start(controller) {
-            controller.enqueue({ kind: "js", data });
+            controller.enqueue({ kind: ChunkKind.Js, data });
             controller.close();
           },
         }),
@@ -53,7 +56,7 @@ function createExampleProvider(_config: z.infer<typeof exampleConfigSchema>): IO
     async getWritableStream(path: string) {
       const chunks: Uint8Array[] = [];
       return {
-        kind: "js" as const,
+        kind: ChunkKind.Js,
         stream: new WritableStream<JsChunk>({
           write(chunk) {
             chunks.push(chunk.data);
@@ -71,7 +74,7 @@ function createExampleProvider(_config: z.infer<typeof exampleConfigSchema>): IO
   };
 }
 
-const exampleFactory: IOProviderFactory<z.infer<typeof exampleConfigSchema>, "js"> = {
+const exampleFactory: IOProviderFactory<z.infer<typeof exampleConfigSchema>, ChunkKind.Js> = {
   configSchema: exampleConfigSchema,
   propertySchema: examplePropertySchema,
   async createProvider(config) {
@@ -90,13 +93,13 @@ describe("IOProviderFactory contract", () => {
     const provider = await exampleFactory.createProvider({ rootPath: "/tmp" });
     const writable = await provider.getWritableStream("hello.txt");
     const writer = (writable.stream as WritableStream<JsChunk>).getWriter();
-    await writer.write({ kind: "js", data: new TextEncoder().encode("hello") });
+    await writer.write({ kind: ChunkKind.Js, data: new TextEncoder().encode("hello") });
     await writer.close();
 
     const readable = await provider.getReadableStream("hello.txt");
     const reader = (readable.stream as ReadableStream<JsChunk>).getReader();
     const { value } = await reader.read();
-    expect(value?.kind).toBe("js");
+    expect(value?.kind).toBe(ChunkKind.Js);
     expect(new TextDecoder().decode(value?.data)).toBe("hello");
 
     await provider[Symbol.asyncDispose]();

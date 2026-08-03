@@ -1,14 +1,19 @@
 /**
- * The two possible chunk memory origins. Kept as a string-literal union
- * rather than a TS `enum` - plugin/adapter authors can write plain string
- * literals ("js"/"native") at every boundary without importing an enum
- * member, and the values serialize directly as-is if ever logged/inspected.
+ * The two possible chunk memory origins. A TS `enum` rather than a
+ * string-literal union - plugin authors already import from this package
+ * for every other type (`IOProvider`, `IOProviderFactory`, etc.), so
+ * requiring `ChunkKind.Js`/`ChunkKind.Native` here adds no new import
+ * burden, and the enum gives a single named, documented, autocompletable
+ * surface for the two values.
  */
-export type ChunkKind = "js" | "native";
+export enum ChunkKind {
+  Js = "js",
+  Native = "native",
+}
 
 /** A chunk whose payload lives in a normal JS-managed Uint8Array. */
 export interface JsChunk {
-  readonly kind: "js";
+  readonly kind: ChunkKind.Js;
   readonly data: Uint8Array;
   readonly attributes?: Readonly<Record<string, unknown>>;
 }
@@ -20,7 +25,7 @@ export interface JsChunk {
  * cannot safely retain a raw pointer past the point its owner frees it.
  */
 export interface NativeChunk {
-  readonly kind: "native";
+  readonly kind: ChunkKind.Native;
   readonly ptr: number;
   readonly length: number;
   release(): void;
@@ -93,7 +98,7 @@ export function adaptReadableStream<From extends ChunkKind, To extends ChunkKind
  * use a runtime-specific {@link ChunkConverter} to copy native memory out.
  */
 export function toUint8Array(chunk: ChunkRef): Uint8Array {
-  if (chunk.kind === "js") {
+  if (chunk.kind === ChunkKind.Js) {
     return chunk.data;
   }
   throw new Error(
@@ -132,7 +137,7 @@ export function fromWebReadableStream(source: ReadableStream<Uint8Array>): Reada
         controller.close();
         return;
       }
-      controller.enqueue({ kind: "js", data: value });
+      controller.enqueue({ kind: ChunkKind.Js, data: value });
     },
     cancel(reason) {
       return reader.cancel(reason);
