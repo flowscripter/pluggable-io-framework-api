@@ -1,6 +1,6 @@
 {
   "name": "@flowscripter/pluggable-io-framework-api",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "API for the https://github.com/flowscripter/pluggable-io-framework",
   "keywords": [
     "api",
