@@ -33,10 +33,26 @@
 - Provider config and per-item property schemas are defined with
   [Zod](https://zod.dev).
 - Multipart transfers are modeled as a stream of independently readable/writable
-  `Part` handles allowing parts to be processed concurrently.
+  `Part` handles allowing parts to be processed concurrently. A provider
+  optionally reports `PartSizeConstraints` (min/max/default part size, max
+  part count) for a given file size via `getPartSizeConstraints` so a caller
+  (e.g. [pluggable-io-framework](https://github.com/flowscripter/pluggable-io-framework)'s
+  `copy`/`move`) can negotiate a single part size that satisfies both a
+  source and a sink (e.g. S3's minimum part size and 10000-part cap).
+- `createFolder` is an optional capability for recreating empty folders at a
+  destination; `supportsRecursiveDirectTransfer` lets a provider declare that
+  its `directCopy`/`directMove` accept a folder path and recurse internally.
 - A global `TelemetryHooks` object is supplied once at
   initialisation and every operation reports through it tagged with a
-  correlation ID.
+  correlation ID. Child operations (multipart parts, recursive-copy entries)
+  report their own progress tagged with a `parentOperationId` alongside the
+  parent's own aggregate stream. `directCopy`/`directMove` accept an optional
+  `TransferTelemetry` (`operationId` + `TelemetryHooks`) so a provider with
+  native progress reporting can surface it.
+- `TransientIOError`/`PermanentIOError` are a small error taxonomy providers
+  can throw/wrap their backend errors in, so framework-level retry logic can
+  classify a failure as worth retrying without knowing about any specific
+  backend's error shapes.
 - Disposal is `Symbol.asyncDispose` (TC39 explicit resource management) -
   `await using provider = await factory.createProvider(config)` disposes
   deterministically, including on thrown errors.
@@ -97,13 +113,16 @@ classDiagram
       +getProperties(path)
       +setProperties(path, properties)
       +delete(path)
+      +createFolder(path)
       +getReadableStream(path)
       +getWritableStream(path)
-      +getMultipartReader(path)
-      +getMultipartWriter(path)
+      +getPartSizeConstraints(totalSize)
+      +getMultipartReader(path, partSize)
+      +getMultipartWriter(path, partSize)
       +canDirectTransfer(other)
-      +directCopy(sourcePath, destPath)
-      +directMove(sourcePath, destPath)
+      +supportsRecursiveDirectTransfer: boolean
+      +directCopy(sourcePath, destPath, telemetry)
+      +directMove(sourcePath, destPath, telemetry)
     }
 ```
 

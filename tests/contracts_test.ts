@@ -67,8 +67,8 @@ function createExampleProvider(
         }),
       };
     },
-    getMultipartReader: async function* () {},
-    getMultipartWriter() {
+    getMultipartReader: async function* (_path: string, _partSize: number) {},
+    getMultipartWriter(_path: string, _partSize: number) {
       return { write: async () => {} };
     },
   };
