@@ -1,19 +1,12 @@
-import type { ItemOfKind, PayloadKind } from "./Item.ts";
-
-/**
- * The built-in payload type ID: an unstructured byte stream. Any other
- * payload type is an opaque, versioned URI (e.g.
- * `urn:flowscripter:packet:h264-au:1`) whose meaning is defined outside this
- * framework. IDs are matched exactly (no versions or wildcards).
- */
-export const BYTES_PAYLOAD_TYPE = "bytes";
+import type { ItemOfKind } from "./Item.ts";
+import type { PayloadKind } from "./payload/PayloadKind.ts";
 
 /**
  * A handle to a readable or writable stream of a single, declared
  * {@link PayloadKind} - homogeneous, so consumers never need to test each
  * item's kind. Plus optional capability methods for providers/decorators
  * that support more than plain sequential read/write - see the capability
- * interfaces and `is*` guards in `StreamDecorator.ts`.
+ * interfaces and `is*` guards in `capability/`.
  */
 export interface StreamHandle<K extends PayloadKind = PayloadKind> {
   readonly kind: K;
@@ -27,35 +20,9 @@ export interface StreamHandle<K extends PayloadKind = PayloadKind> {
   readonly bounded?: boolean;
 
   /**
-   * The payload type ID carried by this stream (the link's assigned payload
-   * type). Defaults to {@link BYTES_PAYLOAD_TYPE}. Confirmed by the open
+   * The payload type ID carried by this stream. Defaults to
+   * {@link BYTES_PAYLOAD_TYPE}. Confirmed by the open
    * handle, since some sources only know it after connecting.
    */
   readonly payloadType?: string;
-}
-
-/** A JSON-serializable value. */
-export type JsonValue =
-  | string
-  | number
-  | boolean
-  | null
-  | readonly JsonValue[]
-  | { readonly [key: string]: JsonValue };
-
-/**
- * Serializable state that lets an interrupted write be resumed via
- * `IOProvider.getWritableStream(path, { resume })`.
- */
-export interface ResumeToken {
-  /** Bytes committed (best known). */
-  readonly offset: number;
-  /** Provider-specific state, e.g. `{ uploadId, parts }` or `{ uploadUrl }`. */
-  readonly state?: JsonValue;
-}
-
-/** Capability of a writable handle that can produce a {@link ResumeToken}. */
-export interface ResumableWritable {
-  /** Must still work after the handle has failed. */
-  resumeToken(): ResumeToken | undefined;
 }

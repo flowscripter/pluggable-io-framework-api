@@ -1,4 +1,5 @@
-import type { ItemOfKind, PayloadKind } from "./Item.ts";
+import type { ItemOfKind } from "./Item.ts";
+import type { PayloadKind } from "./payload/PayloadKind.ts";
 
 /**
  * One independently readable/writable part of a multipart transfer, carrying

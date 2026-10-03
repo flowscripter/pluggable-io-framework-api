@@ -1,7 +1,8 @@
 import type { EntryProperties, EntryPropertyChanges } from "./EntryProperties.ts";
-import type { PayloadKind } from "./Item.ts";
+import type { PayloadKind } from "./payload/PayloadKind.ts";
 import type { Part } from "./Part.ts";
-import type { ResumeToken, StreamHandle } from "./StreamHandle.ts";
+import type { ResumeToken } from "./capability/ResumableWritable.ts";
+import type { StreamHandle } from "./StreamHandle.ts";
 import type { TelemetryHooks } from "./TelemetryHooks.ts";
 
 /**

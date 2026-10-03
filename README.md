@@ -68,7 +68,7 @@ Generate HTML API documentation:
 
 ### API
 
-Link to auto-generated API docs:
+Auto-generated API docs:
 
 [API Documentation](https://flowscripter.github.io/pluggable-io-framework-api/index.html)
 

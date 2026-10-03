@@ -1,4 +1,4 @@
-import type { PayloadKind } from "./Item.ts";
+import type { PayloadKind } from "./payload/PayloadKind.ts";
 import type { IOProvider } from "./IOProvider.ts";
 import type { LocationTarget } from "./LocationTarget.ts";
 
