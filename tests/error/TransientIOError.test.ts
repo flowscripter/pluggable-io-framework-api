@@ -1,19 +1,12 @@
 import { describe, expect, test } from "bun:test";
-import { PermanentIOError, TransientIOError } from "../index.ts";
+import { PermanentIOError, TransientIOError } from "../../index.ts";
 
-describe("TransferError taxonomy", () => {
+describe("TransientIOError", () => {
   test("TransientIOError is an Error with the expected name", () => {
     const error = new TransientIOError("timed out");
     expect(error).toBeInstanceOf(Error);
     expect(error.name).toBe("TransientIOError");
     expect(error.message).toBe("timed out");
-  });
-
-  test("PermanentIOError is an Error with the expected name", () => {
-    const error = new PermanentIOError("not found");
-    expect(error).toBeInstanceOf(Error);
-    expect(error.name).toBe("PermanentIOError");
-    expect(error.message).toBe("not found");
   });
 
   test("TransientIOError and PermanentIOError are distinct types", () => {
