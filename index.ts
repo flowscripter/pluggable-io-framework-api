@@ -14,6 +14,7 @@ export * from "./src/provider/IOProviderFactory.ts";
 export * from "./src/item/Item.ts";
 export * from "./src/util/JsonValue.ts";
 export * from "./src/provider/LocationTarget.ts";
+export * from "./src/stream/MultipartWriter.ts";
 export * from "./src/stream/Part.ts";
 export * from "./src/item/payload/JsPayload.ts";
 export * from "./src/item/payload/NativePayload.ts";

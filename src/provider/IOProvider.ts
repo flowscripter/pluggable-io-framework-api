@@ -1,6 +1,6 @@
 import type { EntryProperties, EntryPropertyChanges } from "./EntryProperties.ts";
 import type { PayloadKind } from "../item/payload/PayloadKind.ts";
-import type { Part } from "../stream/Part.ts";
+import type { MultipartWriter } from "../stream/MultipartWriter.ts";
 import type { ResumeToken } from "../capability/ResumableWritable.ts";
 import type { StreamHandle } from "../stream/StreamHandle.ts";
 import type { TelemetryHooks } from "../TelemetryHooks.ts";
@@ -95,11 +95,18 @@ export interface IOProvider<K extends PayloadKind = PayloadKind> {
    * Provider-specific multipart upload (e.g. S3's multipart protocol). The
    * read side needs no equivalent: any readable handle implementing
    * `RangeReadable` can be read in parts.
+   *
+   * With `resume`, a token from a previous writer's `resumeToken()`, the
+   * writer continues that upload: it re-checks which parts were actually
+   * committed and skips any part it is given again. The token's `offset` is
+   * the size of the committed parts before the first missing one, so the
+   * caller only needs to send the parts from that offset on.
    */
   getMultipartWriter?(
     path: string,
     partSize: number,
-  ): { write(parts: AsyncIterable<Part<K>>): Promise<void> };
+    opts?: { resume?: ResumeToken },
+  ): MultipartWriter<K>;
 
   /**
    * Self-reported direct-transfer eligibility - the provider owns what
