@@ -1,5 +1,5 @@
-import type { Item } from "../Item.ts";
-import { PayloadKind } from "../payload/PayloadKind.ts";
+import type { Item } from "../item/Item.ts";
+import { PayloadKind } from "../item/payload/PayloadKind.ts";
 
 /**
  * Adapter to the standard Web Streams interop surface (fetch, pipeTo

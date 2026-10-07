@@ -1,11 +1,11 @@
 import { describe, expect, test } from "bun:test";
-import { type IOProvider, type Item, PayloadKind, type ResumableWritable } from "../index.ts";
+import { type IOProvider, type Item, PayloadKind, type ResumableWritable } from "../../index.ts";
 import {
   entryProperties,
   exampleContext,
   exampleFactory,
   writeEntry,
-} from "./fixtures/exampleProvider.ts";
+} from "../fixtures/exampleProvider.ts";
 
 describe("IOProvider contract", () => {
   test("setProperties applies framework fields and validated provider properties", async () => {

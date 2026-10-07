@@ -26,24 +26,29 @@ describe("adaptReadableStream", () => {
       },
     });
     let conversions = 0;
-    const convert: PayloadConverter = (item, toKind) => {
-      conversions += 1;
-      if (item.payload.kind === PayloadKind.Js && toKind === PayloadKind.Native) {
-        return {
-          attributes: item.attributes,
-          payload: {
-            kind: PayloadKind.Native,
-            domain: HOST_DOMAIN,
-            ptr: 0,
-            length: item.payload.data.byteLength,
-            release: () => {},
-          },
-        };
-      }
-      throw new Error("unexpected conversion in test");
+    const converter: PayloadConverter = {
+      from: { kind: PayloadKind.Js },
+      to: { kind: PayloadKind.Native, domain: HOST_DOMAIN },
+      cost: 1,
+      convert: (item) => {
+        conversions += 1;
+        if (item.payload.kind === PayloadKind.Js) {
+          return {
+            attributes: item.attributes,
+            payload: {
+              kind: PayloadKind.Native,
+              domain: HOST_DOMAIN,
+              ptr: 0,
+              length: item.payload.data.byteLength,
+              release: () => {},
+            },
+          };
+        }
+        throw new Error("unexpected conversion in test");
+      },
     };
 
-    const adapted = adaptReadableStream(source, PayloadKind.Js, PayloadKind.Native, convert);
+    const adapted = adaptReadableStream(source, PayloadKind.Js, PayloadKind.Native, converter);
     const reader = adapted.getReader();
     const { value } = await reader.read();
     expect(value?.payload.kind).toBe(PayloadKind.Native);

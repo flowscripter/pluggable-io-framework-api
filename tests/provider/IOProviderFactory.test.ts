@@ -4,13 +4,13 @@ import {
   type Item,
   PLUGGABLE_IO_FRAMEWORK_PROVIDER_FACTORY_EXTENSION_POINT,
   PayloadKind,
-} from "../index.ts";
+} from "../../index.ts";
 import {
   exampleContext,
   exampleFactory,
   exampleLocationSchema,
   writeEntry,
-} from "./fixtures/exampleProvider.ts";
+} from "../fixtures/exampleProvider.ts";
 
 describe("IOProviderFactory contract", () => {
   test("extension point constant is a namespaced string", () => {

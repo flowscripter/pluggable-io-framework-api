@@ -4,8 +4,8 @@ import {
   PLUGGABLE_IO_FRAMEWORK_PAYLOAD_CONVERTER_EXTENSION_POINT,
   PayloadKind,
   type Item,
-  type PayloadConverterExtension,
-} from "../../index.ts";
+  type PayloadConverter,
+} from "../../../index.ts";
 
 function nativeItem(): Item<PayloadKind.Native> {
   return {
@@ -19,15 +19,15 @@ function nativeItem(): Item<PayloadKind.Native> {
   };
 }
 
-describe("PayloadConverterExtension", () => {
+describe("PayloadConverter", () => {
   test("extension point constant is a namespaced string distinct from the provider one", () => {
     expect(PLUGGABLE_IO_FRAMEWORK_PAYLOAD_CONVERTER_EXTENSION_POINT).toBe(
       "@flowscripter/pluggable-io-framework/payload-converter",
     );
   });
 
-  test("an extension declares endpoints and cost and converts items", () => {
-    const extension: PayloadConverterExtension = {
+  test("a converter declares endpoints and cost and converts items", () => {
+    const converter: PayloadConverter = {
       from: { kind: PayloadKind.Native, domain: HOST_DOMAIN },
       to: { kind: PayloadKind.Js },
       cost: 1,
@@ -41,8 +41,8 @@ describe("PayloadConverterExtension", () => {
         };
       },
     };
-    const converted = extension.convert(nativeItem());
+    const converted = converter.convert(nativeItem());
     expect(converted.payload.kind).toBe(PayloadKind.Js);
-    expect(extension.cost).toBe(1);
+    expect(converter.cost).toBe(1);
   });
 });

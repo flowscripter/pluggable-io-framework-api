@@ -21,7 +21,7 @@ Provider plugin authors should depend on this package (not the full
 ```
 
 A plugin registers an `IOProviderFactory` (and optionally
-`PayloadConverterExtension`s) via
+`PayloadConverter`s) via
 [dynamic-plugin-framework](https://github.com/flowscripter/dynamic-plugin-framework)
 using the exported extension point constants.
 
@@ -34,8 +34,59 @@ Key exports:
 - `Item`, `JsPayload`, `NativePayload`, `PayloadKind` - the stream unit and its payload kinds.
 - `StreamHandle` plus capability interfaces and guards (`RangeReadable`, `Seekable`,
   `BufferProvider`, `FillReadable`, `ResumableWritable`, ...).
-- `ProviderContext`/`ProviderResolver`, `PayloadConverterExtension`, `TelemetryHooks`,
+- `ProviderContext`/`ProviderResolver`, `PayloadConverter`, `TelemetryHooks`,
   `TransientIOError`/`PermanentIOError`.
+
+## Entries, items and parts
+
+- An **entry** is a single stored thing a provider addresses by key: a file,
+  an object, an HTTP resource. Its metadata is `EntryProperties`. Entries
+  live in **containers** (directories, prefixes), and a `LocationTarget`
+  names an entry, a container or a pattern of entries.
+- An **item** is the unit a stream carries: optional attributes plus a
+  payload (`JsPayload` or `NativePayload`). Reading an entry through a
+  `StreamHandle` yields a sequence of items; writing items to a writable
+  `StreamHandle` produces an entry. One entry is usually many items.
+- A **part** is one byte range of an entry in a multipart transfer: an
+  `index`, an `offset` and its own stream of items. An entry is split into
+  parts so they can be transferred concurrently and reassembled by the
+  sink's multipart writer.
+
+```mermaid
+classDiagram
+    direction LR
+    class Entry {
+      key
+      EntryProperties
+    }
+    class Part {
+      index
+      offset
+      stream
+    }
+    class Item {
+      attributes?
+      payload
+    }
+    Entry "1" --> "*" Part : split into (multipart)
+    Entry "1" --> "*" Item : streamed as
+    Part "1" --> "*" Item : streamed as
+```
+
+## Source layout
+
+| Folder        | Contents                                                                                  |
+| ------------- | ----------------------------------------------------------------------------------------- |
+| `provider/`   | `IOProviderFactory`, `IOProvider`, `ProviderContext`, `LocationTarget`, `EntryProperties` |
+| `item/`       | `Item`, and `payload/` for payload kinds, payload types and converters                    |
+| `stream/`     | `StreamHandle`, `Part`                                                                    |
+| `capability/` | stream handle capabilities and their guards                                               |
+| `decorator/`  | stream decorator types                                                                    |
+| `error/`      | `TransientIOError`, `PermanentIOError`                                                    |
+| `util/`       | `JsonValue` and stream adapters                                                           |
+
+`TelemetryHooks` stays at the top level: it is used by providers and by the
+framework's transfers, so it doesn't belong to any one folder.
 
 See [pluggable-io-framework](https://github.com/flowscripter/pluggable-io-framework)
 for full documentation.

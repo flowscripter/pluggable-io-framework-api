@@ -1,5 +1,5 @@
-import { PayloadKind } from "../payload/PayloadKind.ts";
-import type { StreamHandle } from "../StreamHandle.ts";
+import { PayloadKind } from "../item/payload/PayloadKind.ts";
+import type { StreamHandle } from "../stream/StreamHandle.ts";
 import type { BufferLease } from "./BufferProvider.ts";
 
 /**

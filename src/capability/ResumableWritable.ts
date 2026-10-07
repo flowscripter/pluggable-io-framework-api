@@ -1,6 +1,6 @@
-import type { JsonValue } from "../JsonValue.ts";
-import type { PayloadKind } from "../payload/PayloadKind.ts";
-import type { StreamHandle } from "../StreamHandle.ts";
+import type { JsonValue } from "../util/JsonValue.ts";
+import type { PayloadKind } from "../item/payload/PayloadKind.ts";
+import type { StreamHandle } from "../stream/StreamHandle.ts";
 
 /**
  * Serializable state that lets an interrupted write be resumed via
