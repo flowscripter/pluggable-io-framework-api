@@ -37,6 +37,24 @@ Key exports:
 - `ProviderContext`/`ProviderResolver`, `PayloadConverter`, `TelemetryHooks`,
   `TransientIOError`/`PermanentIOError`.
 
+## Location Strings and Location Objects
+
+An `IOProviderFactory` accepts a location in two forms, and both end at its
+`locationSchema`:
+
+- A location string (`file:///data/a.txt`, `s3://bucket/key`), converted by
+  the factory's required `parseLocationString` into a raw location object.
+  It carries only what the protocol's URL form can express. It is the form
+  `ProviderResolver.createProviderForLocation` takes, because a composite
+  provider resolves URLs it discovers at runtime.
+- A raw location object, validated by `locationSchema` directly. It can
+  carry every field the schema defines, including those a string cannot:
+  a `filename` or glob `pattern`, connection settings and credentials
+  (marked `.meta({ secret: true })`).
+
+Hosts such as `pluggable-io-framework`'s `ProviderRegistry` accept both
+forms.
+
 ## Entries, Items and Parts
 
 - An **entry** is a single stored thing a provider addresses by key: a file,
