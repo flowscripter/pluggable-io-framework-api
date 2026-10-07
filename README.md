@@ -37,7 +37,7 @@ Key exports:
 - `ProviderContext`/`ProviderResolver`, `PayloadConverter`, `TelemetryHooks`,
   `TransientIOError`/`PermanentIOError`.
 
-## Entries, items and parts
+## Entries, Items and Parts
 
 - An **entry** is a single stored thing a provider addresses by key: a file,
   an object, an HTTP resource. Its metadata is `EntryProperties`. Entries
@@ -72,21 +72,6 @@ classDiagram
     Entry "1" --> "*" Item : streamed as
     Part "1" --> "*" Item : streamed as
 ```
-
-## Source layout
-
-| Folder        | Contents                                                                                  |
-| ------------- | ----------------------------------------------------------------------------------------- |
-| `provider/`   | `IOProviderFactory`, `IOProvider`, `ProviderContext`, `LocationTarget`, `EntryProperties` |
-| `item/`       | `Item`, and `payload/` for payload kinds, payload types and converters                    |
-| `stream/`     | `StreamHandle`, `Part`                                                                    |
-| `capability/` | stream handle capabilities and their guards                                               |
-| `decorator/`  | stream decorator types                                                                    |
-| `error/`      | `TransientIOError`, `PermanentIOError`                                                    |
-| `util/`       | `JsonValue` and stream adapters                                                           |
-
-`TelemetryHooks` stays at the top level: it is used by providers and by the
-framework's transfers, so it doesn't belong to any one folder.
 
 See [pluggable-io-framework](https://github.com/flowscripter/pluggable-io-framework)
 for full documentation.
