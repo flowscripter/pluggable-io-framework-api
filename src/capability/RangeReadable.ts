@@ -1,6 +1,6 @@
-import type { ItemOfKind } from "../Item.ts";
-import type { PayloadKind } from "../payload/PayloadKind.ts";
-import type { StreamHandle } from "../StreamHandle.ts";
+import type { ItemOfKind } from "../item/Item.ts";
+import type { PayloadKind } from "../item/payload/PayloadKind.ts";
+import type { StreamHandle } from "../stream/StreamHandle.ts";
 
 /** Capability of a handle that can serve an arbitrary byte range directly. */
 export interface RangeReadable<K extends PayloadKind = PayloadKind> {

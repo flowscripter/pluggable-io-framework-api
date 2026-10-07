@@ -1,9 +1,9 @@
 import type { EntryProperties, EntryPropertyChanges } from "./EntryProperties.ts";
-import type { PayloadKind } from "./payload/PayloadKind.ts";
-import type { Part } from "./Part.ts";
-import type { ResumeToken } from "./capability/ResumableWritable.ts";
-import type { StreamHandle } from "./StreamHandle.ts";
-import type { TelemetryHooks } from "./TelemetryHooks.ts";
+import type { PayloadKind } from "../item/payload/PayloadKind.ts";
+import type { Part } from "../stream/Part.ts";
+import type { ResumeToken } from "../capability/ResumableWritable.ts";
+import type { StreamHandle } from "../stream/StreamHandle.ts";
+import type { TelemetryHooks } from "../TelemetryHooks.ts";
 
 /**
  * Hard/preferred size bounds a provider imposes on multipart transfer parts

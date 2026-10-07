@@ -1,6 +1,6 @@
-import type { NativePayload } from "../payload/NativePayload.ts";
-import { PayloadKind } from "../payload/PayloadKind.ts";
-import type { StreamHandle } from "../StreamHandle.ts";
+import type { NativePayload } from "../item/payload/NativePayload.ts";
+import { PayloadKind } from "../item/payload/PayloadKind.ts";
+import type { StreamHandle } from "../stream/StreamHandle.ts";
 
 /**
  * A sink-provided buffer handed out by a {@link BufferProvider}. The source

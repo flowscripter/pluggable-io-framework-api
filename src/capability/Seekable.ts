@@ -1,5 +1,5 @@
-import type { PayloadKind } from "../payload/PayloadKind.ts";
-import type { StreamHandle } from "../StreamHandle.ts";
+import type { PayloadKind } from "../item/payload/PayloadKind.ts";
+import type { StreamHandle } from "../stream/StreamHandle.ts";
 
 /** Capability added by the `seekable` decorator: jump to an absolute offset. */
 export interface Seekable {

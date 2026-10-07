@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { PayloadKind } from "../index.ts";
-import { exampleContext } from "./fixtures/exampleProvider.ts";
+import { PayloadKind } from "../../index.ts";
+import { exampleContext } from "../fixtures/exampleProvider.ts";
 
 describe("ProviderResolver contract", () => {
   test("resolver creates a provider and target from a location string", async () => {

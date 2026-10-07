@@ -1,5 +1,5 @@
-import type { ItemOfKind } from "./Item.ts";
-import type { PayloadKind } from "./payload/PayloadKind.ts";
+import type { ItemOfKind } from "../item/Item.ts";
+import type { PayloadKind } from "../item/payload/PayloadKind.ts";
 
 /**
  * A handle to a readable or writable stream of a single, declared

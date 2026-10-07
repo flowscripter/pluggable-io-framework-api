@@ -1,5 +1,5 @@
-import type { PayloadKind } from "../payload/PayloadKind.ts";
-import type { StreamHandle } from "../StreamHandle.ts";
+import type { PayloadKind } from "../item/payload/PayloadKind.ts";
+import type { StreamHandle } from "../stream/StreamHandle.ts";
 
 /**
  * Placeholder capability: a cheap forward-only advance without opening a new
