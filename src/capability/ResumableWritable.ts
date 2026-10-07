@@ -1,10 +1,9 @@
 import type { JsonValue } from "../util/JsonValue.ts";
-import type { PayloadKind } from "../item/payload/PayloadKind.ts";
-import type { StreamHandle } from "../stream/StreamHandle.ts";
 
 /**
  * Serializable state that lets an interrupted write be resumed via
- * `IOProvider.getWritableStream(path, { resume })`.
+ * `IOProvider.getWritableStream(path, { resume })` or
+ * `IOProvider.getMultipartWriter(path, partSize, { resume })`.
  */
 export interface ResumeToken {
   /** Bytes committed (best known). */
@@ -13,14 +12,15 @@ export interface ResumeToken {
   readonly state?: JsonValue;
 }
 
-/** Capability of a writable handle that can produce a {@link ResumeToken}. */
+/**
+ * Capability of a writable handle or a `MultipartWriter` that can produce a
+ * {@link ResumeToken}.
+ */
 export interface ResumableWritable {
   /** Must still work after the handle has failed. */
   resumeToken(): ResumeToken | undefined;
 }
 
-export function isResumableWritable<K extends PayloadKind>(
-  handle: StreamHandle<K>,
-): handle is StreamHandle<K> & ResumableWritable {
-  return typeof (handle as Partial<ResumableWritable>).resumeToken === "function";
+export function isResumableWritable<T extends object>(writer: T): writer is T & ResumableWritable {
+  return typeof (writer as Partial<ResumableWritable>).resumeToken === "function";
 }
