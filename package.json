@@ -40,13 +40,13 @@
     "test": "bun test"
   },
   "dependencies": {
-    "zod": "^4.6.6",
+    "zod": "^4.6.7",
     "zod-to-json-schema": "^3.25.2"
   },
   "devDependencies": {
-    "@types/bun": "^1.4.2",
-    "oxfmt": "0.72.0",
-    "oxlint": "1.87.0"
+    "@types/bun": "^1.4.3",
+    "oxfmt": "0.73.0",
+    "oxlint": "1.88.0"
   },
   "peerDependencies": {
     "typescript": "^7.0.2"
