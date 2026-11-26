@@ -108,6 +108,11 @@ Auto-generated API docs:
 
 [API Documentation](https://flowscripter.github.io/pluggable-io-framework-api/index.html)
 
+## Design Records
+
+- [Architecture decision records](design/adr/) for decisions specific to this repo
+- [Change specs and plans](design/changes/) from the agentic development workflow
+
 ## License
 
 MIT © Flowscripter
